@@ -1,13 +1,18 @@
 const koa2Cors = require("koa2-cors");
 const koa2Mongoose = require("mongoose");
 const koa2Bodyparser = require("koa-bodyparser");
-const md5 = require("md5"); //md5加密
+// const md5 = require("md5"); //md5加密
+
+/**
+ * 所有插件相关的配置文件
+ */
+const { jwtItem } = require("./config.Item");
 
 /**
  *  jwt 验证相关
  * */
 const koa2Jwt = require("koa-jwt"); //koa-jwt验证token
-const { jwtItem } = require("./config.Item");
+
 // 验证token
 const { verify } = require("../middleware/auth");
 
@@ -18,7 +23,7 @@ module.exports = {
       origin: function (ctx) {
         //设置允许来自指定域名请求
         if (ctx.url === "/test") {
-          return "*"; // 允许来自所有域名请求
+          return "*"; // 如果为测试接口 允许来自所有域名请求
         }
         return "http://localhost:8080"; //只允许http://localhost:8080这个域名的请求
       },
@@ -30,9 +35,9 @@ module.exports = {
     });
   },
   // 连接数据库
-  mongoConnect: () => {
-    return koa2Mongoose
-      .connect("mongodb://localhost:27017/jianshu", { useNewUrlParser: true })
+  mongoConnect: async () => {
+    return await koa2Mongoose
+      .connect("mongodb://127.0.0.1:27017/myBlogs", { useNewUrlParser: true })
       .then(() => {
         console.log("连接成功");
       })
@@ -52,8 +57,7 @@ module.exports = {
     return koa2Jwt({
       secret: jwtItem.secret,
       isRevoked: verify,
+      debug: true,
     });
   },
-  // MD5加密
-  md5: md5,
 };

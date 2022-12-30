@@ -2,12 +2,15 @@ const {
   register,
   login,
   getUserInfo,
+  updateUserInfo,
+  updataPwd,
+  refreshToken,
 } = require("../controller/user.controller");
 const router = require("koa-router")();
 // 验证token
 const { koa2Jwt } = require("../config/config");
 
-router.prefix("/api/users");
+router.prefix("/users");
 
 // 用户注册
 router.post("/register", register);
@@ -18,13 +21,13 @@ router.post("/login", login);
 // 获取用户信息
 router.get("/getUserInfo", koa2Jwt(), getUserInfo);
 
-// // 验证用户信息
-// router.post("/verify", verify);
+//更新用户信息
+router.put("/updateUserInfo", koa2Jwt(), updateUserInfo);
+
+// 刷新token
+router.post("/refreshToken", refreshToken);
 
 // // 修改密码
-// router.post("/updata/pwd", updataPwd);
-
-// //修改用户信息
-// router.post("/updata/personal", updatePersonal);
+router.put("/updatePwd", koa2Jwt(), updataPwd);
 
 module.exports = router;

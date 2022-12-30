@@ -1,12 +1,14 @@
 // 导入插件
-const { md5 } = require("../config/config");
+// const { md5 } = require("../config/config");
+const md5 = require("md5");
 // 派发token
-const { sign } = require("../middleware/auth");
-const { create, find } = require("../service/users.service");
+const { sign, verifyOne } = require("../middleware/auth");
+// 服务层调用
+const { create, find, update } = require("../service/users.service");
 
 class UserController {
   async register(ctx) {
-    // 用户注册
+    // 用户注册 ---  待完成 短信验证  + redis数据库缓存
     try {
       const userInfo = ctx.request.body;
       if (!userInfo.userName || !userInfo.passWord) {
@@ -35,12 +37,12 @@ class UserController {
           msg: "用户名或密码为必传",
         };
       } else {
-        // condition 需要返回那些数据 //默认为空   字段名：1 返回该数据
+        // condition 需要返回那些数据  字段名：1  返回该数据
         let condition = { userName: 1, passWord: 1 };
-        const res = await find({ userName, passWord }, condition);
+        const res = await find({ userName }, condition);
         // 验证是否相等
         if (userName === res[0].userName && md5(passWord) === res[0].passWord) {
-          // 配发 token
+          // 派发token
           const token = sign({ userName: res[0].userName });
           ctx.body = {
             code: 0,
@@ -66,126 +68,70 @@ class UserController {
       console.log(error);
     }
   }
+  async updateUserInfo(ctx) {
+    // 更新用户信息
+    try {
+      const userInfo = ctx.request.body;
+      const { acknowledged } = await update(userInfo, {
+        userName: ctx.userName,
+      });
+      if (acknowledged) {
+        ctx.body = {
+          code: 0,
+          msg: "更新成功",
+        };
+      } else {
+        ctx.body = {
+          code: 1,
+          msg: "更新失败",
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async updataPwd(ctx) {
+    // 修改密码
+    try {
+      const { oldPassWord, newPassWord } = ctx.request.body;
+      let condition = { passWord: 1 }; //定义查询条件 只需返回密码即可
+      const res = await find({ userName: ctx.userName }, condition);
+      console.log(res);
+      // if (oldPassWord === newPassWord) {
+      //   ctx.body = {
+      //     code: 1,
+      //     msg: "新旧密码相同",
+      //   };
+      //   return;
+      // }
+
+      // await update({ userName: ctx.userName }, {});
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async refreshToken(ctx, userName) {
+    // 获取上传的旧token
+    // 解析token
+    try {
+      const { oldToken } = ctx.request.body;
+      const res = verifyOne(oldToken);
+    } catch (e) {
+      if (e.message === "jwt expired") {
+        const newToken = sign({ userName });
+        // // 调用node的response对象  将新的token发送给前端
+        ctx.res.setHeader("authorization", newToken);
+        ctx.body = {
+          code: 0,
+          msg: "刷新token成功",
+          token: newToken,
+        };
+      }
+    }
+  }
 }
 
 module.exports = new UserController();
-
-// // 用户登录
-// const login = async (ctx) => {
-//   let { username, pwd } = ctx.request.body;
-
-//   await Users.findOne({ username, pwd })
-//     .then((rel) => {
-//       if (rel) {
-//         let token = jwt.sign(
-//           {
-//             username: rel.username,
-//             _id: rel._id,
-//           },
-//           "jianshu-serve-jwt",
-//           {
-//             expiresIn: "2h",
-//           }
-//         );
-//         ctx.body = {
-//           code: 200,
-//           msg: "登陆成功",
-//           token,
-//           rel,
-//         };
-//       } else {
-//         ctx.body = {
-//           code: 300,
-//           msg: "用户名或密码错误",
-//         };
-//       }
-//     })
-//     .catch((err) => {
-//       ctx.body = {
-//         code: 500,
-//         msg: "登录时出现异常",
-//         err,
-//       };
-//     });
-// };
-
-// /**
-//  * 用户注册
-//  */
-// const reg = async (ctx) => {
-//   let { username, pwd } = ctx.request.body;
-
-//   let isExistence = false;
-//   await Users.findOne({ username }).then((rel) => {
-//     if (rel) isExistence = true;
-//   });
-
-//   if (isExistence) {
-//     ctx.body = {
-//       code: 300,
-//       msg: "该用户已经存在",
-//     };
-//     return;
-//   }
-
-//   await Users.create({ username, pwd })
-//     .then((rel) => {
-//       if (rel) {
-//         ctx.body = {
-//           code: 200,
-//           msg: "注册成功",
-//         };
-//       } else {
-//         ctx.body = {
-//           code: 300,
-//           msg: "注册失败",
-//         };
-//       }
-//     })
-//     .catch((err) => {
-//       ctx.body = {
-//         code: 500,
-//         msg: "注册时出现异常",
-//         err,
-//       };
-//     });
-// };
-
-// //验证用户登录
-// const verify = async (ctx) => {
-//   let token = ctx.header.authorization;
-//   token = token.replace("Bearer ", "");
-
-//   try {
-//     let reuslt = jwt.verify(token, "jianshu-serve-jwt");
-//     await Users.findOne({ _id: reuslt._id })
-//       .then((rel) => {
-//         if (rel) {
-//           ctx.body = {
-//             code: 200,
-//             msg: "用户认证成功",
-//             user: rel,
-//           };
-//         } else {
-//           ctx.body = {
-//             code: 500,
-//             msg: "用户认证失败",
-//           };
-//         }
-//       })
-//       .catch((err) => {
-//         ctx.body = {
-//           code: 500,
-//           msg: "用户认证失败",
-//         };
-//       });
-//   } catch (error) {
-//     ctx.body = {
-//       code: 500,
-//       msg: "用户认证失败",
-//     };
-//   }
-// };
 
 // // 修改用户密码
 // const updataPwd = async (ctx) => {
@@ -222,49 +168,4 @@ module.exports = new UserController();
 //         msg: "修改时出现异常",
 //       };
 //     });
-// };
-
-// /**
-//  * 修改用户资料的方法
-//  */
-// const updatePersonal = async (ctx) => {
-//   let user = ctx.request.body;
-//   await Users.updateOne(
-//     { _id: user._id },
-//     {
-//       username: user.username,
-//       avater: user.avater,
-//       sex: user.sex,
-//       desc: user.desc,
-//       phone: user.phone,
-//       email: user.email,
-//     }
-//   )
-//     .then((rel) => {
-//       if (rel.modifiedCount > 0) {
-//         ctx.body = {
-//           code: 200,
-//           msg: "信息修改成功",
-//         };
-//       } else {
-//         ctx.body = {
-//           code: 300,
-//           msg: "信息修改失败",
-//         };
-//       }
-//     })
-//     .catch((err) => {
-//       ctx.body = {
-//         code: 500,
-//         msg: "修改时出现错误",
-//       };
-//     });
-// };
-
-// module.exports = {
-//   reg,
-//   login,
-//   verify,
-//   updataPwd,
-//   updatePersonal,
 // };

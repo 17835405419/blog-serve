@@ -1,10 +1,15 @@
-const Article = require("../model/article");
+const Article = require("../../model/article_model/article");
 
 async function pageQuery(condition) {
-  let { page, pageSize, sortQuery, sortStyle } = condition;
+  let { page, pageSize, sortQuery, sortStyle, isShowAll } = condition;
+  if (isShowAll) {
+    // 如果存在该字段 则返回全部文章
+    return await Article.find();
+  }
   // 定义查询条件 根据什么查询 {可扩展}
   let query = {};
-  condition.id && Object.assign(query, { id: condition.id });
+  condition.articleId &&
+    Object.assign(query, { articleId: condition.articleId });
   condition.author && Object.assign(query, { author: condition.author });
   // 判断排序
   let sort = "";
@@ -59,25 +64,25 @@ async function pageQuery(condition) {
 class ArticleService {
   async create(articleInfo) {
     // 发布文章
-    await Article.create(articleInfo);
+    return await Article.create(articleInfo);
   }
 
   async find(condition) {
     //查询文章
 
     /**
-     *  page 查询的页数 {可不传 默认一页}
-     *  pageSize 每一页显示条数  {可不传 默认十条}
-     * sortStyle 排序方式  {0 为降序 1为升序}
-     * sortQuery 排序参数 根据什么排序
+     *  @params page 查询的页数 {可不传 默认一页}
+     *          pageSize 每一页显示条数  {可不传 默认十条}
+     *          sortQuery 排序参数 根据什么排序
+     *          sortStyle 排序方式  {0 为降序 1为升序}
+     *
      */
     return await pageQuery(condition);
   }
 
   async update(condition, updateInfo) {
     //更新文章
-
-    let { id } = condition;
+    let { articleId } = condition;
     // 存放更改的内容
     let doc = {};
     updateInfo.title && Object.assign(doc, { title: updateInfo.title });
@@ -86,14 +91,15 @@ class ArticleService {
       Object.assign(doc, { stemfrom: updateInfo.stemfrom });
     updateInfo.articleImg &&
       Object.assign(doc, { articleImg: updateInfo.articleImg });
-
-    return await Article.updateOne({ id }, doc);
+    updateInfo.articleState &&
+      Object.assign(doc, { articleState: updateInfo.articleState });
+    return await Article.updateOne({ articleId }, doc);
   }
 
   async deletes(condition) {
     // 删除文章
-    const { id } = condition;
-    return await Article.deleteOne({ id });
+    const { articleId } = condition;
+    return await Article.deleteOne({ articleId });
   }
 }
 

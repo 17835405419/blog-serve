@@ -1,5 +1,5 @@
-let Comment = require("../model/comment");
-let Article = require("../model/article");
+let Comment = require("../../model/article_model/comment");
+let Article = require("../../model/article_model/article");
 
 /**
  * 添加评论api
@@ -7,7 +7,7 @@ let Article = require("../model/article");
 
 const add = async (ctx) => {
   let comment = ctx.request.body;
-  let id =Number(comment.articleId);    
+  let id = Number(comment.articleId);
   // 记录评论状态
   let isComment = false;
   await Comment.create(comment)
@@ -17,7 +17,7 @@ const add = async (ctx) => {
         ctx.body = {
           code: 200,
           msg: "发布评论成功",
-          id:id
+          id: id,
         };
       } else {
         ctx.body = {
@@ -34,7 +34,7 @@ const add = async (ctx) => {
     });
 
   if (isComment == true) {
-    await Article.updateOne({id}, { $inc: {comment: 1 } });
+    await Article.updateOne({ id }, { $inc: { comment: 1 } });
   }
 };
 
@@ -42,7 +42,7 @@ const add = async (ctx) => {
  * 前台查询接口
  */
 const findById = async (ctx) => {
-  let { articleId,page } = ctx.query;
+  let { articleId, page } = ctx.query;
   if (!page || isNaN(Number(page))) {
     page = 1;
   } else {
@@ -53,7 +53,7 @@ const findById = async (ctx) => {
 
   // 计算总页数
   let count = 0; //总条数
-  await Comment.find( {articleId} )
+  await Comment.find({ articleId })
     .count()
     .then((rel) => {
       count = rel;
@@ -74,10 +74,10 @@ const findById = async (ctx) => {
   //   skip 是查询的起始位置  limit 是每页要查询多少条数据
   // 计算起始位置
   let start = (page - 1) * pagesize;
-  await Comment.find({articleId})
+  await Comment.find({ articleId })
     .skip(start)
     .limit(pagesize)
-    .sort({createTime:-1})
+    .sort({ createTime: -1 })
     .then((rel) => {
       if (rel && rel.length > 0) {
         ctx.body = {

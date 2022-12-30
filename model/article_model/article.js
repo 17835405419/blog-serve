@@ -2,32 +2,31 @@ let mongoose = require("mongoose");
 
 // 文章文档对象
 let schema = new mongoose.Schema({
-  id: {
+  articleId: {
     type: Number,
     unique: true,
     default: Date.now,
-    required: true,
   }, //文章Id
   title: {
     type: String,
-    default: "",
+    required: true,
   },
-  author: {
-    type: String,
-    default: "",
-  }, //作者
+  authorId: {
+    type: Number,
+    required: true,
+  }, //作者Id
   content: {
     type: String,
-    default: "",
+    required: true,
   }, //内容
   stemfrom: {
     type: String,
-    default: "",
+    required: true,
   }, //来源
   articleImg: {
     type: String,
     default: "",
-  }, //文章图片
+  }, //文章封面图片
   createTime: {
     type: Number,
     default: Date.now,

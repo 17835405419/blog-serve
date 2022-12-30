@@ -1,19 +1,23 @@
-let mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 //用户对象
 let schema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    default: Date.now,
+    unique: true,
+  },
   userName: {
     type: Number,
     required: true,
     minlength: 9,
     maxlength: 9, //限制为九位数数字
-    unique: true,
   }, //用户名
   passWord: {
     type: String,
     required: true,
-    select: false, //表示查询时密码为隐藏状态
-  }, //密码
+    select: false,
+  }, //密码  默认不显示
   nickName: {
     type: String,
     default: "默认用户",
@@ -23,13 +27,17 @@ let schema = new mongoose.Schema({
     default: "",
   }, //头像
   sex: {
-    type: String,
-    default: "",
+    type: Number,
+    default: 0, // 0 男生 1女生
   }, //性别
   desc: {
     type: String,
     default: "",
   }, //  用户的信息描述
+  fansNum: {
+    type: Number,
+    default: 0,
+  }, //作者粉丝数
 
   // phone: {
   //   type: Number,

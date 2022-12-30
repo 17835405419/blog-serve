@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const files = fs.readdirSync(__dirname);
+router.prefix("/api"); //设置统一路由前缀
 
 files.forEach((file) => {
   if (file !== "index.js") {
