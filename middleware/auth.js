@@ -18,10 +18,16 @@ module.exports = {
   verify: async (ctx, decodeToken) => {
     // 解码的token数据挂载到上下文中
     ctx.userName = decodeToken["userName"];
-    const res = await find({ userName: ctx.userName });
-    if (res.isDisable === 1) {
+    const res = await find(
+      { userName: ctx.userName },
+      { isDisable: 1, role: 1 }
+    );
+    if (res[0].isDisable === 1) {
       // 账号被封禁
       throw "Account blocked";
+    } else {
+      // 将角色权限挂载至上下文
+      ctx.role = res[0].role;
     }
   },
 

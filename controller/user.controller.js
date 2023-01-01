@@ -1,5 +1,4 @@
 // 导入插件
-// const { md5 } = require("../config/config");
 const md5 = require("md5");
 // 派发token
 const { sign, verifyOne } = require("../middleware/auth");
@@ -49,6 +48,11 @@ class UserController {
             msg: "登陆成功",
             token: token,
           };
+        } else {
+          ctx.body = {
+            code: 1,
+            msg: "账号或密码错误",
+          };
         }
       }
     } catch (error) {
@@ -72,6 +76,7 @@ class UserController {
     // 更新用户信息
     try {
       const userInfo = ctx.request.body;
+
       const { acknowledged } = await update(userInfo, {
         userName: ctx.userName,
       });
@@ -94,18 +99,29 @@ class UserController {
     // 修改密码
     try {
       const { oldPassWord, newPassWord } = ctx.request.body;
+
       let condition = { passWord: 1 }; //定义查询条件 只需返回密码即可
       const res = await find({ userName: ctx.userName }, condition);
-      console.log(res);
-      // if (oldPassWord === newPassWord) {
-      //   ctx.body = {
-      //     code: 1,
-      //     msg: "新旧密码相同",
-      //   };
-      //   return;
-      // }
-
-      // await update({ userName: ctx.userName }, {});
+      if (res[0].passWord !== md5(oldPassWord)) {
+        ctx.body = {
+          code: 1,
+          msg: "旧密码不正确",
+        };
+      } else if (oldPassWord === newPassWord) {
+        ctx.body = {
+          code: 1,
+          msg: "新旧密码相同",
+        };
+      } else {
+        await update(
+          { passWord: md5(newPassWord) },
+          { userName: ctx.userName }
+        );
+        ctx.body = {
+          code: 0,
+          msg: "修改密码成功",
+        };
+      }
     } catch (error) {
       console.log(error);
     }
@@ -132,40 +148,3 @@ class UserController {
 }
 
 module.exports = new UserController();
-
-// // 修改用户密码
-// const updataPwd = async (ctx) => {
-//   let { username, pwd } = ctx.request.body;
-
-//   await Users.updateOne(
-//     { username }, //查询条件
-//     { pwd } //要更改的内容
-//   )
-//     .then((rel) => {
-//       ctx.body = {
-//         rel: rel,
-//       };
-//       if (rel.modifiedCount > 0) {
-//         ctx.body = {
-//           code: 200,
-//           msg: "密码修改成功",
-//         };
-//       } else if (rel.modifiedCount == 0) {
-//         ctx.body = {
-//           code: 300,
-//           msg: "新旧密码重复",
-//         };
-//       } else {
-//         ctx.body = {
-//           code: 300,
-//           msg: "密码修改错误",
-//         };
-//       }
-//     })
-//     .catch((err) => {
-//       ctx.body = {
-//         code: 500,
-//         msg: "修改时出现异常",
-//       };
-//     });
-// };

@@ -23,6 +23,14 @@ let schema = new mongoose.Schema({
     type: String,
     required: true,
   }, //来源
+  articlPartName: {
+    type: String,
+    default: "",
+  }, //分区
+  showTagList: {
+    type: Array,
+    default: [],
+  }, //标签列表
   articleImg: {
     type: String,
     default: "",

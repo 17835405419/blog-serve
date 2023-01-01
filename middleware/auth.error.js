@@ -7,6 +7,7 @@ module.exports = function () {
       await next();
     } catch (error) {
       const { message } = error;
+      console.log(message);
       switch (message) {
         case "Token not found":
           ctx.body = {
@@ -25,10 +26,17 @@ module.exports = function () {
             code: 1004,
             msg: "token过期",
           };
+          break;
         case "Account blocked":
           ctx.body = {
             code: 1005,
             msg: "该账户已被封禁",
+          };
+          break;
+        case "INSUFFICENT PERMISSIONS":
+          ctx.body = {
+            code: 1006,
+            msg: "该账户权限不足",
           };
           break;
       }

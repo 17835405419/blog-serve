@@ -27,15 +27,21 @@ class UserService {
      * 可更新的内容
      *
      */
+
     let doc = {};
     userInfo.nickName && Object.assign(doc, { nickName: userInfo.nickName });
     userInfo.passWord && Object.assign(doc, { passWord: userInfo.passWord });
     userInfo.emailNum &&
       Object.assign(doc, { "email.emailNum": userInfo.emailNum });
     userInfo.avater && Object.assign(doc, { avater: userInfo.avater });
-    userInfo.sex && Object.assign(doc, { sex: userInfo.sex });
-    userInfo.isDisable && Object.assign(doc, { isDisable: userInfo.isDisable }); //是否禁用
-
+    // 特殊处理 js隐式转换 0默认为 false 会导致doc获取不到性别数据
+    (userInfo.sex === 0 || 1 || 2) && Object.assign(doc, { sex: userInfo.sex });
+    userInfo.desc && Object.assign(doc, { desc: userInfo.desc });
+    if (userInfo.isDisable && ctx.role === "SUPERADMIN") {
+      userInfo.isDisable &&
+        Object.assign(doc, { isDisable: userInfo.isDisable }); //是否禁用 这需要超级管理员权限
+    }
+    console.log(doc);
     return await Users.updateOne(condition, doc);
   }
 }

@@ -17,6 +17,8 @@ let schema = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
+    minlength: 6,
+    maxlength: 15,
   }, //密码  默认不显示
   nickName: {
     type: String,
@@ -57,7 +59,11 @@ let schema = new mongoose.Schema({
       default: null,
     }, //验证码
   },
-
+  role: {
+    type: String,
+    default: "ORDINARYUSER",
+    select: false,
+  }, //角色权限
   isDisable: {
     type: Number,
     default: 0,

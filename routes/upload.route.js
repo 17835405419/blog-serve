@@ -3,7 +3,10 @@ const path = require("path");
 const router = require("koa-router")();
 const multer = require("koa-multer");
 const { koa2Jwt } = require("../config/config"); // 验证token 中间件
-const { changeAvater } = require("../controller/upload.controller"); //获取上传控制层
+const {
+  changeAvater,
+  articleCover,
+} = require("../controller/upload.controller"); //获取上传控制层
 
 //设置文件存储位置
 let storage = multer.diskStorage({
@@ -37,5 +40,12 @@ router.prefix("/upload");
 
 // 上传头像
 router.post("/avater", upload.single("avater"), koa2Jwt(), changeAvater);
+// 上传封面
+router.post(
+  "/articleCover",
+  upload.single("articleCover"),
+  koa2Jwt(),
+  articleCover
+);
 
 module.exports = router;

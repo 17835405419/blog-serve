@@ -7,7 +7,6 @@ const {
 } = require("../controller/article_controller/article.controller");
 
 const router = require("koa-router")();
-router.prefix("/api");
 
 // 发布文章
 router.post("/article", createArticle);
