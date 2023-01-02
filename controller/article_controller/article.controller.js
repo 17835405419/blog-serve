@@ -9,7 +9,8 @@ class ArticleController {
   async createArticle(ctx) {
     // 发布文章
     try {
-      const articleInfo = ctx.request.body;
+      const { articleInfo } = ctx.request.body;
+
       await create(articleInfo);
       ctx.body = {
         code: 0,
@@ -28,7 +29,7 @@ class ArticleController {
       ctx.body = {
         code: 0,
         msg: "查询成功",
-        res: res,
+        data: res,
       };
     } catch (error) {
       console.log(error);

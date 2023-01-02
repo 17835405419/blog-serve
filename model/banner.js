@@ -1,9 +1,24 @@
-let mongoose =require('mongoose')
+let mongoose = require("mongoose");
 let schema = new mongoose.Schema({
-    id:Number,
-    img:String
-})
+  bannerId: {
+    type: Number,
+    default: Date.now,
+  },
+  imgUrl: {
+    type: String,
+    required: true,
+    default: "",
+  },
+  href: {
+    type: String,
+    default: "",
+  },
+  alt: {
+    type: String,
+    default: "",
+  },
+});
 
-let Banner = mongoose.model('banners',schema)
+let Banner = mongoose.model("banners", schema);
 
-module.exports =Banner
+module.exports = Banner;

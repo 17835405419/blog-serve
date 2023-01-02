@@ -6,6 +6,11 @@ const { koa2Jwt } = require("../config/config"); // 验证token 中间件
 const {
   changeAvater,
   articleCover,
+  deleteArticleCover,
+  articleImg,
+  deleteArticleImg,
+  bannerImg,
+  deleteBannerImg,
 } = require("../controller/upload.controller"); //获取上传控制层
 
 //设置文件存储位置
@@ -47,5 +52,18 @@ router.post(
   koa2Jwt(),
   articleCover
 );
+
+// 删除上传的文章封面
+router.delete("/articleCover", koa2Jwt(), deleteArticleCover);
+
+// 上传文章图片
+router.post("/articleImg", upload.single("articleImg"), koa2Jwt(), articleImg);
+// 删除上传的文章图片
+router.delete("/articleImg", koa2Jwt(), deleteArticleImg);
+
+// 上传轮播图
+router.post("/banner", upload.single("banner"), koa2Jwt(), bannerImg);
+// 删除轮播图
+router.delete("/banner", koa2Jwt(), deleteBannerImg);
 
 module.exports = router;

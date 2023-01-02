@@ -5,11 +5,12 @@ const {
   updateArticle,
   deleteArticle,
 } = require("../controller/article_controller/article.controller");
+const { koa2Jwt } = require("../config/config");
 
 const router = require("koa-router")();
 
 // 发布文章
-router.post("/article", createArticle);
+router.post("/article", koa2Jwt(), createArticle);
 
 //查询文章
 router.get("/article", findArticle);

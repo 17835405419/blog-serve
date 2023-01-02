@@ -58,7 +58,15 @@ async function pageQuery(condition) {
   // 如果为查询单个 则使得观看数 +1
 
   // 返回查询结果
-  return await Article.find(query).sort(sort).skip(start).limit(pageSize);
+  return {
+    ArticleInfo: await Article.find(query)
+      .sort(sort)
+      .skip(start)
+      .limit(pageSize),
+    count: count,
+    page: page,
+    pageSize: pageSize,
+  };
 }
 
 class ArticleService {

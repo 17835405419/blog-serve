@@ -9,15 +9,23 @@ const mac = new qiniu.auth.digest.Mac(
 const options = {
   scope: QINIU_CONFIG.BUCKET,
 };
+
 const putPolicy = new qiniu.rs.PutPolicy(options);
+// 生成上传token
 const uploadToken = putPolicy.uploadToken(mac);
-//
+//构建上传配置
 const config = new qiniu.conf.Config();
 // 空间对应的机房
 config.zone = QINIU_CONFIG.ZONE;
 
+// 构建上传操作对象
 const formUploader = new qiniu.form_up.FormUploader(config);
 const putExtra = new qiniu.form_up.PutExtra();
+
+// 构建资源管理操作对象
+const bucketManager = new qiniu.rs.BucketManager(mac, config);
+// 上传空间
+const bucket = QINIU_CONFIG.BUCKET;
 
 /**
  *
@@ -47,6 +55,19 @@ const qnUpload = (key, localFile) => {
   });
 };
 
+const qnDelete = (key) => {
+  return new Promise((resolve, reject) => {
+    bucketManager.delete(bucket, key, (err, respBody, respInfo) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(respBody);
+      }
+    });
+  });
+};
+
 module.exports = {
   qnUpload,
+  qnDelete,
 };
