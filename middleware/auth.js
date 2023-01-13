@@ -2,7 +2,7 @@
  *  验证用户
  */
 const jwt = require("jsonwebtoken"); //生成token
-const { find } = require("../service/users.service"); //导入用户service层
+const { find } = require("../service/user_service/users.service"); //导入用户service层
 // 导入插件配置
 const { jwtItem } = require("../config/config.Item");
 

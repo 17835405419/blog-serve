@@ -35,20 +35,6 @@ class ArticleController {
       console.log(error);
     }
   }
-  async findArticleAll() {
-    // 查询全部文章
-    try {
-      const { isShowAll } = ctx.query;
-      const res = await find({ isShowAll });
-      ctx.body = {
-        code: 0,
-        msg: "查询成功",
-        res: res,
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async updateArticle(ctx) {
     // 更新文章

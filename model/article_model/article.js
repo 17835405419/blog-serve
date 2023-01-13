@@ -15,6 +15,10 @@ let schema = new mongoose.Schema({
     type: Number,
     required: true,
   }, //作者Id
+  authorName: {
+    type: String,
+    require: true,
+  },
   content: {
     type: String,
     required: true,

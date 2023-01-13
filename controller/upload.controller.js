@@ -12,6 +12,7 @@ class UploadController {
       const reader = fs.createReadStream(paths); //生成可读流文件
       const res = await qnUpload(`avater/${key}`, reader);
       const imgUrl = QINIU_CONFIG.DOMAIN_NAME + res.key; //上传成功的图片地址
+
       if (imgUrl) {
         // await update({ avater: imgUrl }, { userName: ctx.userName });
         ctx.body = {

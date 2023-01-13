@@ -1,4 +1,4 @@
-const { upfollow, findAll } = require("../controller/fans.controller");
+// const { upfollow, findAll } = require("../controller/fans.controller");
 
 const router = require("koa-router")();
 router.prefix("/fans");
@@ -7,8 +7,8 @@ router.prefix("/fans");
 // router.post("/follow", follow);
 
 // 取消关注作者api
-router.post("/upfollow", upfollow);
+router.post("/upfollow");
 
 //查询粉丝
-router.get("/findAll", findAll);
+router.get("/findAll");
 module.exports = router;

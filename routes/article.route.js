@@ -1,7 +1,7 @@
 const {
   createArticle,
   findArticle,
-  findArticleAll,
+
   updateArticle,
   deleteArticle,
 } = require("../controller/article_controller/article.controller");
@@ -14,8 +14,6 @@ router.post("/article", koa2Jwt(), createArticle);
 
 //查询文章
 router.get("/article", findArticle);
-//获取全部文章
-router.get("/articles", findArticleAll);
 
 // 更新文章
 router.put("/article", updateArticle);

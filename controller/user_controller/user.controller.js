@@ -1,9 +1,13 @@
 // 导入插件
 const md5 = require("md5");
 // 派发token
-const { sign, verifyOne } = require("../middleware/auth");
+const { sign, verifyOne } = require("../../middleware/auth");
 // 服务层调用
-const { create, find, update } = require("../service/users.service");
+const {
+  create,
+  find,
+  update,
+} = require("../../service/article_service/article.service");
 
 class UserController {
   async register(ctx) {
@@ -60,7 +64,7 @@ class UserController {
     }
   }
   async getUserInfo(ctx) {
-    // 获取用户信息
+    // 登录后获取用户信息
     try {
       const res = await find({ userName: ctx.userName });
       ctx.body = {
@@ -72,6 +76,7 @@ class UserController {
       console.log(error);
     }
   }
+
   async updateUserInfo(ctx) {
     // 更新用户信息
     try {

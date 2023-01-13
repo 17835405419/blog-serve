@@ -1,7 +1,7 @@
 // 导入插件
 const md5 = require("md5"); //md5加密
 // 导入用户模型
-let Users = require("../model/users");
+let Users = require("../../model/user_model/users");
 
 class UserService {
   async create(userInfo) {
@@ -12,15 +12,14 @@ class UserService {
   }
   async find(userInfo, condition = {}) {
     /**
-     * @userInfo  根据哪些用户信息查询用户
+     * @findConditon  根据哪些用户信息查询用户
      * @condition  需要返回那些数据 默认为空    字段名：1  返回该数据 ； 0 则不返回
      */
-    return await Users.find(
-      {
-        userName: userInfo.userName,
-      },
-      condition
-    );
+    let findConditon = {};
+    userInfo.userName &&
+      Object.assign(findConditon, { userName: userInfo.userName });
+    userInfo.userId && Object.assign(findConditon, { userId: userInfo.userId });
+    return await Users.find(findConditon, condition);
   }
   async update(userInfo, condition) {
     /***

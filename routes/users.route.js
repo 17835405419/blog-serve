@@ -5,7 +5,7 @@ const {
   updateUserInfo,
   updataPwd,
   refreshToken,
-} = require("../controller/user.controller");
+} = require("../controller/user_controller/user.controller");
 const router = require("koa-router")();
 // 验证token
 const { koa2Jwt } = require("../config/config");

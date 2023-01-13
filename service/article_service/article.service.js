@@ -1,11 +1,8 @@
 const Article = require("../../model/article_model/article");
 
 async function pageQuery(condition) {
-  let { page, pageSize, sortQuery, sortStyle, isShowAll } = condition;
-  if (isShowAll) {
-    // 如果存在该字段 则返回全部文章
-    return await Article.find();
-  }
+  let { page, pageSize, sortQuery, sortStyle } = condition;
+
   // 定义查询条件 根据什么查询 {可扩展}
   let query = {};
   condition.articleId &&
@@ -55,8 +52,6 @@ async function pageQuery(condition) {
   // 计算起始位置
   let start = (page - 1) * pageSize;
 
-  // 如果为查询单个 则使得观看数 +1
-
   // 返回查询结果
   return {
     ArticleInfo: await Article.find(query)
@@ -85,6 +80,15 @@ class ArticleService {
      *          sortStyle 排序方式  {0 为降序 1为升序}
      *
      */
+
+    // 如果是通过文章Id查找的话，该文章浏览量加一
+
+    if (condition.articleId) {
+      await Article.updateOne(
+        { articleId: condition.articleId },
+        { $inc: { "articleHandle.read": 1 } }
+      );
+    }
     return await pageQuery(condition);
   }
 
