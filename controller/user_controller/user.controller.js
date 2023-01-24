@@ -7,25 +7,41 @@ const {
   create,
   find,
   update,
-} = require("../../service/article_service/article.service");
+} = require("../../service/user_service/users.service");
 
 class UserController {
   async register(ctx) {
     // 用户注册 ---  待完成 短信验证  + redis数据库缓存
     try {
       const userInfo = ctx.request.body;
+
       if (!userInfo.userName || !userInfo.passWord) {
         ctx.body = {
           code: 1,
           msg: "用户名或密码为必传",
         };
-      } else {
-        await create(userInfo);
-        ctx.body = {
-          code: 0,
-          msg: "注册成功",
-        };
+        return;
       }
+      const user = await find({ userName: userInfo.userName }, { userName: 1 });
+      if (user.length === 0) {
+        const res = await create(userInfo);
+        if (res === true) {
+          ctx.body = {
+            code: 0,
+            msg: "注册成功",
+          };
+        } else {
+          ctx.body = {
+            code: 1,
+            msg: res,
+          };
+        }
+        return;
+      }
+      ctx.body = {
+        code: 1,
+        msg: "该用户已被注册",
+      };
     } catch (error) {
       console.log(error);
     }
@@ -33,7 +49,9 @@ class UserController {
   async login(ctx) {
     // 登录
     try {
-      const { userName, passWord } = ctx.request.body;
+      let { userName, passWord } = ctx.request.body;
+      // 将用户名强转为Number
+      userName = Number(userName);
       if (!userName || !passWord) {
         ctx.body = {
           code: 1,
@@ -43,6 +61,7 @@ class UserController {
         // condition 需要返回那些数据  字段名：1  返回该数据
         let condition = { userName: 1, passWord: 1 };
         const res = await find({ userName }, condition);
+
         // 验证是否相等
         if (userName === res[0].userName && md5(passWord) === res[0].passWord) {
           // 派发token
@@ -52,12 +71,12 @@ class UserController {
             msg: "登陆成功",
             token: token,
           };
-        } else {
-          ctx.body = {
-            code: 1,
-            msg: "账号或密码错误",
-          };
+          return;
         }
+        ctx.body = {
+          code: 1,
+          msg: res,
+        };
       }
     } catch (error) {
       console.log(error);

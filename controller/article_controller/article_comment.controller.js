@@ -11,6 +11,7 @@ class ArticleCommentController {
   async createComment(ctx) {
     // 新增点赞
     const commentInfo = ctx.request.body;
+
     const res = await creates(commentInfo);
     if (res === true) {
       ctx.body = {
@@ -43,11 +44,10 @@ class ArticleCommentController {
   async findComment(ctx) {
     const findQuery = ctx.query;
     const res = await finds(findQuery);
-
-    if (res.code == 0) {
+    if (res.code === 0) {
       ctx.body = {
         code: 0,
-        data: res.commentInfo.res,
+        data: res.commentInfo,
       };
       return;
     }

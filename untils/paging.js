@@ -1,10 +1,7 @@
 async function paging(model, condition) {
   let { query, page, pageSize, sortQuery, sortStyle, returnQuery } = condition;
-  // 判断查询条件 查询条件默认为空
-  if (!query || query !== {}) {
-    query = {};
-  }
   // 判断返回什么数据 默认全部返回
+
   if (!returnQuery || returnQuery != {}) {
     returnQuery = {};
   }
@@ -37,7 +34,8 @@ async function paging(model, condition) {
   }
 
   //   计算总页数
-  const count = await model.find({ query }).count();
+  const count = await model.find(query).count();
+
   let totalPage = 0; //总页数
   if (count > 0) {
     //向上取整
@@ -45,7 +43,7 @@ async function paging(model, condition) {
   }
 
   //  判断当前页码的范围
-  if (page > 0 && page > totalPage) {
+  if (page > 0 && page > totalPage && totalPage !== 0) {
     page = totalPage;
   } else if (page < 1) {
     page = 1;
@@ -53,6 +51,7 @@ async function paging(model, condition) {
 
   // 计算起始位置 从零开始算第一页 但是传过来的页数最小是1 所以需要处理
   let start = (page - 1) * pageSize;
+
   const res = await model
     .find(query, returnQuery)
     .sort(sort)

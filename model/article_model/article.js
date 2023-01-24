@@ -63,6 +63,10 @@ let schema = new mongoose.Schema({
       type: Number,
       default: 0,
     },
+    collection: {
+      type: Number,
+      default: 0,
+    },
   },
 });
 let Article = mongoose.model("articles", schema);

@@ -1,21 +1,18 @@
-/**
- * 点赞模块
- */
-
+/* 收藏模块 */
 const {
   creates,
   deletes,
   finds,
-} = require("../../service/article_service/article_star.service");
-class ArticleStarController {
-  async createStar(ctx) {
-    // 新增点赞
-    const starInfo = ctx.request.body;
-    const res = await creates(starInfo);
+} = require("../../service/article_service/article_collection.service");
+class ArticleCollectionController {
+  async createCollection(ctx) {
+    // 新增文章收藏
+    const collectionInfo = ctx.request.body;
+    const res = await creates(collectionInfo);
     if (res === true) {
       ctx.body = {
         code: 0,
-        msg: "点赞成功",
+        msg: "收藏成功",
       };
       return;
     }
@@ -24,14 +21,14 @@ class ArticleStarController {
       msg: res,
     };
   }
-  async deleteStar(ctx) {
-    // 取消点赞
+  async deleteCollection(ctx) {
+    // 删除文章收藏
     const deleteQuery = ctx.query;
     const res = await deletes(deleteQuery);
     if (res === true) {
       ctx.body = {
         code: 0,
-        msg: "取消点赞成功",
+        msg: "取消收藏成功",
       };
       return;
     }
@@ -40,14 +37,14 @@ class ArticleStarController {
       msg: res,
     };
   }
-  async findStar(ctx) {
-    const findQuery = ctx.query;
 
+  async findCollection(ctx) {
+    const findQuery = ctx.query;
     const res = await finds(findQuery);
-    if (res.code == 0) {
+    if (res.code === 0) {
       ctx.body = {
         code: 0,
-        data: res.starInfo,
+        data: res.collectionInfo,
       };
       return;
     }
@@ -58,4 +55,4 @@ class ArticleStarController {
   }
 }
 
-module.exports = new ArticleStarController();
+module.exports = new ArticleCollectionController();

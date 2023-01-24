@@ -23,8 +23,8 @@ class ArticleStarService {
   }
   async deletes(deleteQuery) {
     try {
-      const { articleId } = deleteQuery;
-      await Stars.deleteOne({ articleId });
+      const { articleId, userId } = deleteQuery;
+      await Stars.deleteOne({ articleId, userId });
       // 修改文章点赞数
       await Article.updateOne(
         { articleId: articleId },
@@ -38,7 +38,22 @@ class ArticleStarService {
 
   async finds(findQuery) {
     try {
+      // 定义查询条件
+      let query = {};
+      findQuery.articleId &&
+        Object.assign(query, { articleId: findQuery.articleId });
+      findQuery.userId && Object.assign(query, { userId: findQuery.userId });
+      findQuery.authorId &&
+        Object.assign(query, { authorId: findQuery.authorId });
+
+      // 将query参数合并到 findQuery对象中
+      Object.assign(findQuery, { query });
+
       const starInfo = await paging(Stars, findQuery);
+
+      if (starInfo.count === 0) {
+        return "查询结果为空";
+      }
       return {
         code: 0,
         starInfo,

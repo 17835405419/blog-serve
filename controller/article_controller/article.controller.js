@@ -8,75 +8,75 @@ const {
 class ArticleController {
   async createArticle(ctx) {
     // 发布文章
-    try {
-      const { articleInfo } = ctx.request.body;
 
-      await create(articleInfo);
+    const articleInfo = ctx.request.body;
+    const res = await create(articleInfo);
+    if (res === true) {
       ctx.body = {
         code: 0,
         msg: "文章发布成功",
       };
-    } catch (error) {
-      console.log(error);
+      return;
     }
+    ctx.body = {
+      code: 1,
+      msg: res,
+    };
   }
 
   async findArticle(ctx) {
     // 查询文章
-    try {
-      const condition = ctx.query;
-      const res = await find(condition);
+
+    const condition = ctx.query;
+
+    const res = await find(condition);
+    if (res.code === 0) {
       ctx.body = {
         code: 0,
         msg: "查询成功",
-        data: res,
+        data: res.articleInfo,
       };
-    } catch (error) {
-      console.log(error);
+      return;
     }
+    ctx.body = {
+      code: 1,
+      msg: res,
+    };
   }
 
   async updateArticle(ctx) {
     // 更新文章
-    try {
-      const { articleId } = ctx.query;
-      const updateInfo = ctx.request.body;
-      const res = await update({ articleId }, updateInfo);
-      if (res.acknowledged !== false) {
-        ctx.body = {
-          code: 0,
-          msg: "更新成功",
-        };
-      } else {
-        ctx.body = {
-          code: 1,
-          msg: "更新失败",
-        };
-      }
-    } catch (error) {
-      console.log(error);
+
+    const updateInfo = ctx.request.body;
+
+    const res = await update(updateInfo);
+    if (res === true) {
+      ctx.body = {
+        code: 0,
+        msg: "更新成功",
+      };
+      return;
     }
+    ctx.body = {
+      code: 1,
+      msg: res,
+    };
   }
 
   async deleteArticle(ctx) {
-    // 删除文章
-    try {
-      const { articleId } = ctx.query;
-      const res = await deletes({ articleId });
-      if (res.deletedCount !== 0) {
-        ctx.body = {
-          code: 0,
-          msg: "删除成功",
-        };
-      } else {
-        ctx.body = {
-          code: 1,
-          msg: "删除失败",
-        };
-      }
-    } catch (error) {
-      console.log(error);
+    const deleteQuery = ctx.query;
+    const res = await deletes(deleteQuery);
+    if (res === true) {
+      ctx.body = {
+        code: 0,
+        msg: "删除文章成功",
+      };
+      return;
     }
+    ctx.body = {
+      code: 1,
+      msg: res,
+    };
   }
 }
 

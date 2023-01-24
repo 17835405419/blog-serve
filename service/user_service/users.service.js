@@ -5,21 +5,32 @@ let Users = require("../../model/user_model/users");
 
 class UserService {
   async create(userInfo) {
-    // 用户注册
-    // 密码加密
-    Object.assign(userInfo, { passWord: md5(userInfo.passWord) });
-    await Users.create(userInfo);
+    try {
+      // 用户注册
+      // 密码加密
+      Object.assign(userInfo, { passWord: md5(userInfo.passWord) });
+      await Users.create(userInfo);
+      return true;
+    } catch (error) {
+      return error.message;
+    }
   }
   async find(userInfo, condition = {}) {
     /**
      * @findConditon  根据哪些用户信息查询用户
      * @condition  需要返回那些数据 默认为空    字段名：1  返回该数据 ； 0 则不返回
      */
-    let findConditon = {};
-    userInfo.userName &&
-      Object.assign(findConditon, { userName: userInfo.userName });
-    userInfo.userId && Object.assign(findConditon, { userId: userInfo.userId });
-    return await Users.find(findConditon, condition);
+    try {
+      let findConditon = {};
+      userInfo.userName &&
+        Object.assign(findConditon, { userName: userInfo.userName });
+      userInfo.userId &&
+        Object.assign(findConditon, { userId: userInfo.userId });
+      const res = await Users.find(findConditon, condition);
+      return res;
+    } catch (error) {
+      return error.message;
+    }
   }
   async update(userInfo, condition) {
     /***

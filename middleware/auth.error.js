@@ -7,7 +7,6 @@ module.exports = function () {
       await next();
     } catch (error) {
       const { message } = error;
-      console.log(message);
       switch (message) {
         case "Token not found":
           ctx.body = {

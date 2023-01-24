@@ -1,18 +1,18 @@
-const Comment = require("../../model/article_model/article_comment");
+const Collection = require("../../model/article_model/article_collection");
 const Article = require("../../model/article_model/article");
 
 // 导入分页函数
 const paging = require("../../untils/paging");
 
-class ArticleCommentrService {
-  async creates(commentInfo) {
+class ArticleCollectionService {
+  async creates(collectionInfo) {
     // 新增评论
     try {
-      await Comment.create(commentInfo);
-      // 修改文章评论数
+      await Collection.create(collectionInfo);
+      // 修改文章收藏数
       await Article.updateOne(
-        { articleId: commentInfo.articleId },
-        { $inc: { "articleHandle.comment": 1 } }
+        { articleId: collectionInfo.articleId },
+        { $inc: { "articleHandle.collection": 1 } }
       );
       return true;
     } catch (error) {
@@ -21,12 +21,12 @@ class ArticleCommentrService {
   }
   async deletes(deleteQuery) {
     try {
-      const { commentId, articleId } = deleteQuery;
-      await Comment.deleteOne({ commentId });
-      // 修改文章评论数
+      const { userId, articleId } = deleteQuery;
+      await Comment.deleteOne({ userId, articleId });
+      // 修改文章收藏数
       await Article.updateOne(
         { articleId: articleId },
-        { $inc: { "articleHandle.comment": -1 } }
+        { $inc: { "articleHandle.collection": -1 } }
       );
       return true;
     } catch (error) {
@@ -43,17 +43,15 @@ class ArticleCommentrService {
       findQuery.userId && Object.assign(query, { userId: findQuery.userId });
       findQuery.authorId &&
         Object.assign(query, { authorId: findQuery.authorId });
-      findQuery.commentId &&
-        Object.assign(query, { commentId: findQuery.commentId });
 
       Object.assign(findQuery, { query });
-      const commentInfo = await paging(Comment, findQuery);
-      if (commentInfo.count === 0) {
+      const collectionInfo = await paging(Collection, findQuery);
+      if (collectionInfo.count === 0) {
         return "查询结果为空";
       }
       return {
         code: 0,
-        commentInfo,
+        collectionInfo,
       };
     } catch (error) {
       return error.message;
@@ -61,4 +59,4 @@ class ArticleCommentrService {
   }
 }
 
-module.exports = new ArticleCommentrService();
+module.exports = new ArticleCollectionService();
