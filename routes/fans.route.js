@@ -10,7 +10,7 @@ const router = require("koa-router")();
 router.post("/fans", koa2Jwt(), follow);
 
 // 取消关注作者api
-router.post("/upfollow", koa2Jwt(), upfollow);
+router.delete("/fans", koa2Jwt(), upfollow);
 
 //查询粉丝or关注列表
 router.get("/fans", koa2Jwt(), findFans);

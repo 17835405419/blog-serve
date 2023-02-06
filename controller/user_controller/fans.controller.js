@@ -7,6 +7,7 @@ class FansController {
   async follow(ctx) {
     // 关注作者接口
     const fansInfo = ctx.request.body;
+
     const res = await creates(fansInfo);
     if (res === true) {
       ctx.body = {
@@ -24,6 +25,7 @@ class FansController {
   async upfollow(ctx) {
     // 取消关注接口
     let deleteQuery = ctx.query;
+
     const res = await deletes(deleteQuery);
     if (res === true) {
       ctx.body = {

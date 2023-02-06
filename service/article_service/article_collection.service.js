@@ -22,7 +22,7 @@ class ArticleCollectionService {
   async deletes(deleteQuery) {
     try {
       const { userId, articleId } = deleteQuery;
-      await Comment.deleteOne({ userId, articleId });
+      await Collection.deleteOne({ userId, articleId });
       // 修改文章收藏数
       await Article.updateOne(
         { articleId: articleId },

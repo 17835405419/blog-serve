@@ -1,7 +1,10 @@
 async function paging(model, condition) {
   let { query, page, pageSize, sortQuery, sortStyle, returnQuery } = condition;
-  // 判断返回什么数据 默认全部返回
 
+  if (!query) {
+    query = {};
+  }
+  // 判断返回什么数据 默认全部返回
   if (!returnQuery || returnQuery != {}) {
     returnQuery = {};
   }

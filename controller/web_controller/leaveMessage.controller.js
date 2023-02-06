@@ -1,22 +1,19 @@
-/**
- * 评论模块
- */
-
+/* 
+    留言模块
+*/
 const {
   creates,
   deletes,
   finds,
-} = require("../../service/article_service/article_comment.service");
-class ArticleCommentController {
-  async createComment(ctx) {
-    // 新增评论
-    const commentInfo = ctx.request.body;
-
-    const res = await creates(commentInfo);
+} = require("../../service/web_controller/leaveMessage.service.js");
+class LeavemessageController {
+  async createMessage(ctx) {
+    const messageInfo = ctx.request.body;
+    const res = await creates(messageInfo);
     if (res === true) {
       ctx.body = {
         code: 0,
-        msg: "评论成功",
+        msg: "留言成功",
       };
       return;
     }
@@ -25,9 +22,11 @@ class ArticleCommentController {
       msg: res,
     };
   }
-  async deleteComment(ctx) {
-    // 删除点赞
+
+  async deleteMessage(ctx) {
+    // 删除留言
     const deleteQuery = ctx.query;
+
     const res = await deletes(deleteQuery);
     if (res === true) {
       ctx.body = {
@@ -41,13 +40,14 @@ class ArticleCommentController {
       msg: res,
     };
   }
-  async findComment(ctx) {
+
+  async findMessage(ctx) {
     const findQuery = ctx.query;
     const res = await finds(findQuery);
     if (res.code === 0) {
       ctx.body = {
         code: 0,
-        data: res.commentInfo,
+        data: res.messageInfo,
       };
       return;
     }
@@ -58,4 +58,4 @@ class ArticleCommentController {
   }
 }
 
-module.exports = new ArticleCommentController();
+module.exports = new LeavemessageController();

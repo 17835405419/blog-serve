@@ -20,11 +20,12 @@ let schema = new mongoose.Schema({
   }, //密码  默认不显示
   nickName: {
     type: String,
-    default: "默认用户",
+    default: "默认用户" + Math.round(Math.random() * 1000), //随机生成1000以内的整数
   }, //用户名
   avater: {
     type: String,
-    default: "",
+    default:
+      "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg3.doubanio.com%2Fview%2Fgroup_topic%2Fl%2Fpublic%2Fp515017570.jpg&refer=http%3A%2F%2Fimg3.doubanio.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1678161681&t=8cfe486b864889c7850d7de0026c296e",
   }, //头像
   sex: {
     type: Number,
